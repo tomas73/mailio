@@ -317,6 +317,22 @@ void imap::fetch(const string& mailbox, unsigned long message_no, message& msg, 
 }
 
 
+void imap::fetch(unsigned long message_no, std::string &str)
+{
+  const string RFC822_TOKEN = string("RFC822");
+  string cmd;
+  cmd.append("FETCH " + to_string(message_no) + " BODY[1]");
+  _dlg->send(format(cmd));
+
+  //  _dlg->send("A FETCH 6 BODY[1]");
+  string line = _dlg->receive();
+  line = _dlg->receive();
+  str=line;
+  do {
+    line = _dlg->receive();
+  } while(line.find("complete") == std::string::npos);
+}
+
 // Fetching literal is the only place where line is ended with LF only, instead of CRLF. Thus, `receive(true)` and counting EOLs is performed.
 void imap::fetch(unsigned long message_no, message& msg, bool is_uid, bool header_only)
 {
@@ -326,7 +342,8 @@ void imap::fetch(unsigned long message_no, message& msg, bool is_uid, bool heade
     if (is_uid)
         cmd.append("UID ");
     cmd.append("FETCH " + to_string(message_no) + TOKEN_SEPARATOR_STR + RFC822_TOKEN);
-    _dlg->send(format(cmd));
+    //    _dlg->send(format(cmd));
+    _dlg->send("A FETCH 6 BODY[1]");
 
     // Stores a message as string literals for parsing after the OK response.
     string msg_str;
@@ -335,6 +352,8 @@ void imap::fetch(unsigned long message_no, message& msg, bool is_uid, bool heade
     {
         reset_response_parser();
         string line = _dlg->receive();
+	std::cout << "line: " << line << std::endl;
+	
         tag_result_response_t parsed_line = parse_tag_result(line);
 
         if (parsed_line.tag == UNTAGGED_RESPONSE)

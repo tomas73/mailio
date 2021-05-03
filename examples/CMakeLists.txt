@@ -2,7 +2,8 @@
 function(add_mailio_example SOURCE_FILE)
     get_filename_component(file_name ${SOURCE_FILE} NAME_WE)
     add_executable(${file_name} ${SOURCE_FILE})
-    target_link_libraries(${file_name} PUBLIC mailio ${CMAKE_THREAD_LIBS_INIT})
+    target_compile_features(${file_name} PUBLIC cxx_std_17)
+    target_link_libraries(${file_name} PUBLIC mailio crypto pthread ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LDFLAGS})
     install(TARGETS ${file_name} DESTINATION "${SHARE_INSTALL_DIR}/${PROJECT_NAME}/examples")
 endfunction(add_mailio_example)
 

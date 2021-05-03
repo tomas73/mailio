@@ -288,6 +288,9 @@ public:
     void fetch(const std::list<messages_range_t> messages_range, std::map<unsigned long, message>& found_messages, bool is_uids = false,
         bool header_only = false, codec::line_len_policy_t line_policy = codec::line_len_policy_t::RECOMMENDED);
 
+
+   void fetch(unsigned long message_no, std::string &str);
+
     /**
     Appending a message to the given folder.
 
